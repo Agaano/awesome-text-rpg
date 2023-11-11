@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import { useGameLogic } from './gameLogic';
 import FightScene from './FightScene'
 import {useModalAlert} from './hooks/useModalAlert';
+import character from './assets/character.png'
 
 import gameComponentStyles from './GameComponent.styles';
 import Scene from './Scene';
@@ -16,7 +17,6 @@ const GameComponent: React.FC = () => {
   return (
     <div style={gameComponentStyles.container as React.CSSProperties}>
     <div style={gameComponentStyles.header}> 
-      <h1>Игра</h1>
       <ConfirmWindow/>
       <AlertWindow/>
       <ModalAlertWindow/>
@@ -26,13 +26,15 @@ const GameComponent: React.FC = () => {
       <div style={gameComponentStyles.healthBar}>
         <div style={{ width: `${gameState.health}%`, ...gameComponentStyles.healthBarInner }}>{gameState.health}</div>
       </div>
-      <div style={gameComponentStyles.stats}>
+      <div style={gameComponentStyles.stats} className = 'game-stats'>
         <p onClick={() => {call('Урон наносимый персонажем по врагу')}}>Урон: {gameState.damage}</p> 
+        <img style={{width: 170, height: 170}} src = {character}/>
         <p onClick={() => {call('Процент блокируемого урона')}}>Защита: {gameState.protection}</p> 
         <p onClick={() => {call('Шанс увернуться от атаки противника')}}>Ловкость: {gameState.agility}%</p>
+        <p>Инвентарь: {gameState.inventory.reduce((acc, item) => acc + item.name + ',', '')}</p>
         <p onClick={() => {call('Шанс получить предмет после победы над противником')}}>Удача: {gameState.fortune}%</p>
       </div>
-      <p>Инвентарь: {gameState.inventory.reduce((acc, item) => acc + item.name + ',', '')}</p>
+     
     </div>
       {
         gameState.currentScene.type === 'scene' ?

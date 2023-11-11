@@ -54,7 +54,7 @@ export const gameComponentStyles = {
     stats: {
       display: 'grid', 
       gridTemplateRows: '1fr 1fr', 
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: '1fr 1fr 1fr',
       width: '300px',
       marginInline: 'auto',
     }
