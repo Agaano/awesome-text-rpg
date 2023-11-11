@@ -1,5 +1,5 @@
-// index.tsx
 
+import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import GameComponent from './GameComponent';

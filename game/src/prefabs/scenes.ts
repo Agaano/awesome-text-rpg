@@ -62,7 +62,7 @@ const scenes: Array<SceneType> = [
 		text: 'Зомби повержен, и вы можете продолжить свой путь.',
 		type: 'scene',
 		options: [
-		  { choice: 'Пройти дальше', nextScene: { id: 8, type: 'scene' } },
+		  { choice: 'Прыгнуть в яму', nextScene: { id: Math.abs(Math.floor(Math.random() * 40)), type: 'scene' } },
 		  { choice: 'Поискать дополнительные ресурсы', nextScene: { id: 9, type: 'scene' } },
 		],
 	  },

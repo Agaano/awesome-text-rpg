@@ -34,7 +34,7 @@ export const sceneStyles = {
       },
       enemyHealthBar: {
         width: '100%',
-        height: '10px',
+        height: '20px',
         backgroundColor: '#ddd',
         borderRadius: '5px',
         overflow: 'hidden',
@@ -43,6 +43,9 @@ export const sceneStyles = {
       enemyHealthBarInner: {
         height: '100%',
         backgroundColor: 'red',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         transition: 'width 0.3s',
       },
     };

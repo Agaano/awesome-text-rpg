@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import scenes from './prefabs/scenes';
+import { useModalAlert, useModalConfirm } from './hooks/useModalAlert';
 
-export interface GameState {
+export interface GameStateType {
   currentScene: SceneType;
   inventory: any[];
   health: number;
+  damage: number;
+  protection: number;
+  agility: number;
+  fortune: number
 }
 
 export type OptionType = {
@@ -44,6 +49,10 @@ export type ItemType = {
   damage?: number,
   healing?: number, 
   special?: string,
+  shield?: number,
+  agility?: number,
+  fortune?: number,
+  type: 'weapon' | 'potion' | 'special' | 'hat' | 'chest' | 'shield' | 'pants' | 'boots'
 }
 
 
@@ -66,12 +75,50 @@ const enemies: EnemyType[] = [
     },
   ];
   
-  export const items = [
-    { id: 1, name: 'Меч', damage: 20 },
-    { id: 2, name: 'Зелье здоровья', healing: 30 },
-    { id: 3, name: 'Магический артефакт', special: 'Призывает дракона' },
+  export const items: ItemType[] = [
+    { id: 1, name: 'Меч', damage: 5, type: 'weapon'},
+    { id: 2, name: 'Зелье здоровья', healing: 15, type: 'potion'},
+    { id: 3, name: 'Шапка мудрости', special: 'Увеличивает магический урон', type: 'hat'},
+    { id: 4, name: 'Кольчуга героя', shield: 10, type: 'chest'},
+    { id: 5, name: 'Ботинки быстроты',agility: 10, special: 'Повышает скорость передвижения', type: 'boots'},
+    { id: 6, name: 'Кристальный посох', damage: 8, special: 'Наносит магический урон', type: 'weapon'},
+    { id: 16, name: 'Двуручный меч', damage: 15, type: 'weapon'},
+    { id: 7, name: 'Эликсир силы', special: 'Увеличивает физический урон', type: 'potion'},
+    { id: 8, name: 'Плащ невидимости', shield: 10, type: 'chest'},
+    { id: 9, name: 'Стальные поножи', shield: 5, type: 'pants'},
+    { id: 10, name: 'Легкие сапоги', shield: 10 ,special: 'Обеспечивают легкость движения', type: 'boots'},
+    { id: 17, name: 'Эликсир ловкости', special: 'Повышает шанс уклонения', shield: 10, type: 'potion'},
+    { id: 18, name: 'Колдовская шляпа', special: 'Усиливает заклинания', shield: 10 ,type: 'hat'},
+    { id: 19, name: 'Кольчуга тени', shield: 20, type: 'chest'},
+    { id: 20, name: 'Сапоги бури', special: 'Призывают ветер при движении', shield: 5, damage: 5, type: 'boots'},
+    { id: 21, name: 'Магический посох', damage: 20, special: 'Разрушительные заклинания', type: 'weapon'},
+    { id: 22, name: 'Ядовитое зелье', special: 'Наносит ядовитый урон', type: 'potion'},
+    { id: 23, name: 'Маска демона', shield: 10, type: 'hat'},
+    { id: 24, name: 'Плащ невидимости', special: 'Скрывает от врагов', type: 'chest'},
+    { id: 25, name: 'Стальные поножи', shield: 15, type: 'pants'},
   ];
+
+  type set = {
+    set: number[],
+    damage?: number,
+    healing?: number, 
+    special?: string,
+    shield?: number,
+    agility?: number,
+    fortune?: number,
+  }
   
+  export const sets: set[] = [
+    {
+      set: [1,2,3,4,5],
+      damage: 5,
+    },
+    {
+      set: [6,7,8,9,10],
+      
+    }
+  ]
+
   export const npcs = [
     {
       name: 'Торговец',
@@ -79,24 +126,42 @@ const enemies: EnemyType[] = [
     },
   ];
 
+  const initialAgility = 25;
+  const initialDamage = 5;
+  const initialProtection = 0;
+  const initialHealth = 100;
+  const initialFortune = 25;
 
-export function useGameLogic(): [GameState, () => void, (option: any) => void, (option: any) => void, EnemyType | undefined] {
+
+export function useGameLogic(): [GameStateType, () => void, (option: any) => void, (option: any) => void, EnemyType | undefined, any, any] {
   const [currentScene, setCurrentScene] = useState<SceneType>(scenes[0]);
   const [previousScene, setPreviousScene] = useState<number>(0);
   const [inventory, setInventory] = useState<ItemType[]>([]);
-  const [health, setHealth] = useState<number>(100);
+  const [health, setHealth] = useState<number>(initialHealth);
   const [battleState, setBattleState] = useState<undefined | EnemyType>();
+  const [ConfirmWindow, callConfirm] = useModalConfirm()
+  const [AlertWindow, callAlert] = useModalAlert()
+  const agility = inventory.reduce((acc,item) => acc += item?.agility ?? 0, initialAgility);
+  const damage = inventory.reduce((acc, items) => acc += items?.damage ?? 0, initialDamage)
+  const protection = inventory.reduce((acc, item) => acc += item?.shield ?? 0, initialProtection);
+  const fortune = inventory.reduce((acc,item) => acc += item?.fortune ?? 0, initialFortune)
 
   const startGame = (): void => {
     setCurrentScene(scenes[0]);
     setInventory([]);
     setHealth(100);
+    setBattleState(undefined);
+    setPreviousScene(0);
   };
 
-  const gameState:GameState = {
+  const gameState:GameStateType = {
     currentScene,
     inventory,
     health,
+    damage,
+    protection, 
+    agility,
+    fortune
   };
 
   const goToScene = (sceneIndex: number) => {
@@ -105,6 +170,7 @@ export function useGameLogic(): [GameState, () => void, (option: any) => void, (
       startBattle(scene)
     setCurrentScene(scene)
   }
+
   const startBattle = (scene: SceneType) => {
     setPreviousScene(currentScene.id);
     setBattleState(getEnemyById(scene.battle?.enemiesId[0]))
@@ -122,17 +188,23 @@ export function useGameLogic(): [GameState, () => void, (option: any) => void, (
 
   const leaveTheBattle = () => {
     if (!currentScene.nextScene || !battleState) return
-    if (Math.random() > 0.5) 
-      pickItem(Math.floor(Math.random() * items.length))
     setBattleState(undefined);
     goToScene(currentScene.nextScene);
   }
+  
+  const healHp = (hp: number) => {
+    setHealth(prev => prev += hp);
+  }
 
   const biteHp = (hp: number) => {
-    setHealth(prev => prev += hp)
-    if (health + hp <= 0) {
-      startGame()
-    }
+    const protectionCoff = 1 - (protection / 100);
+    setHealth(prev => {
+      if (prev - (hp * protectionCoff) <= 0) {
+        callAlert('Вы проиграли!!!! В следующий раз будьте внимательнее!!!')
+        startGame()
+      }
+      return prev -= (hp * protectionCoff)
+    })
   }
 
   const makeBattleChoice = (option: BattleOptionType): void => {
@@ -140,25 +212,57 @@ export function useGameLogic(): [GameState, () => void, (option: any) => void, (
     if (option.type === 'attack') {
       setBattleState(prev => {
         if (!prev) return
-        const curr = {...prev, hp: prev.hp - 10} 
-        if (battleState.hp <= 0) {
+        const curr = {...prev, hp: prev.hp - damage} 
+        if (prev.hp - damage <= 0) {
+          if (Math.random() > 0.5) pickItem(Math.floor(Math.random() * items.length) + 1)
           leaveTheBattle();
           return
         }
-        return curr 
+        return curr
       })
-      biteHp(Math.random() > 0.5 ? 0 : -battleState.damage)
+      biteHp(Math.random() < (agility / 100) ? 0 : battleState.damage)
     } else if (option.type === 'healing') {
-    } else if (option.type === 'shield') {
-      
+      const heal = inventory.reduce((acc, item) => acc += item?.healing ?? 0, 0 )
+      setInventory(prev => {
+        const index = prev.findIndex((item) => item.healing)
+        return removeByIndex(prev, index);
+      })
+      if (heal <= 0 ) return
+      healHp(heal)
     } else if (option.type === 'leave') {
-      const is = confirm('Вы уверены что хотите сбежать?')
-      if (is) {
-        biteHp(-(battleState.damage / 2))
-        alert('Вы проиграли!!!! В следующий раз будьте внимательнее!!!')
-        leaveTheBattle();
+      callConfirm('Вы уверены что хотите сбежать?')?.then((value) => {
+        if (value) {
+          biteHp(battleState.damage / 2);
+          leaveTheBattle();
+        }
+      })
+    }
+  }
+
+  function removeByIndex(array: Array<any>, index: number) {
+    if (index < 0 || index >= array.length) {
+      return array;
+    }
+  
+    const newArray = new Array(array.length - 1);
+    for (let i = 0; i < index; i++) {
+      newArray[i] = array[i];
+    }
+    for (let i = index + 1; i < array.length; i++) {
+      newArray[i - 1] = array[i];
+    }
+  
+    return newArray;
+  }
+
+  function findByProperty(array: Array<any>, property: string, value: any) {
+    const results = [];
+    for (const object of array) {
+      if (object[property] === value) {
+        results.push(object);
       }
     }
+    return results;
   }
   
   const getItemById = (itemId: number) => {
@@ -167,9 +271,28 @@ export function useGameLogic(): [GameState, () => void, (option: any) => void, (
     return item
   }
 
-  const pickItem = (itemId: number) => {
-    setInventory(prev => [...prev, getItemById(itemId)])
+  const pickItem = async (itemId: number) => {
+    const item = getItemById(itemId)
+    if (!(await callConfirm(`Вы хотите подобрать ${item.name}?
+Помните, что предметы одного типа заменяются.`))) return  
+    if (item.type === 'weapon' && findByProperty(inventory, 'type', 'weapon').length >= 2) {
+        setInventory(prev => {
+          const index = prev.findIndex((item) => item.type === 'weapon');
+          return removeByIndex(prev, index);
+        })
+    }
+
+    const availableTypes = ['hat', 'pants', 'chest', 'shield', 'boots'];
+    availableTypes.map((typeOfWear) => {
+      if (item.type === typeOfWear && findByProperty(inventory, 'type', typeOfWear).length >= 1) {
+          setInventory(prev => {
+          const index = prev.findIndex((item) => item.type === typeOfWear);
+          return removeByIndex(prev, index);
+        })
+      }
+    })
+    setInventory(prev => [...prev, item])
   }
 
-  return [gameState,startGame, makeChoice, makeBattleChoice, battleState];
+  return [gameState,startGame, makeChoice, makeBattleChoice, battleState, ConfirmWindow, AlertWindow];
 }

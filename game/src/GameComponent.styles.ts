@@ -36,6 +36,7 @@ export const gameComponentStyles = {
       backgroundColor: '#45a049',
     },
     healthBar: {
+      marginInline: 'auto',
       width: '300px',
       height: '20px',
       backgroundColor: '#ddd',
@@ -45,8 +46,18 @@ export const gameComponentStyles = {
     healthBarInner: {
       height: '100%',
       backgroundColor: '#4CAF50',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       transition: 'width 0.3s',
     },
+    stats: {
+      display: 'grid', 
+      gridTemplateRows: '1fr 1fr', 
+      gridTemplateColumns: '1fr 1fr',
+      width: '300px',
+      marginInline: 'auto',
+    }
   };
   
   export default gameComponentStyles;
