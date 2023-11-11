@@ -1,4 +1,4 @@
-import { SceneType } from "../gameLogic";
+import { SceneType } from "../types/types";
 
 const scenes: Array<SceneType> = [
 	{
