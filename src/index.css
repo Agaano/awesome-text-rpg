@@ -11,6 +11,31 @@ button {
 .game-stats p {
   user-select: none;
   cursor: pointer;
+  height: 50%;
+}
+
+.game-stats {
+  margin: 25px;
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  margin-inline: auto;
+  height: fit-content;
+}
+
+.game-stats div {
+  width: 30%;
+}
+
+.game-stats img {
+  height: 50%;
+  width: 50%;
+  object-fit: cover;
+}
+
+.inventory {
+  width: 300px;
+  height: fit-content;
 }
 
 .modal {

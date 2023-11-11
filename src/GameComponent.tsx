@@ -26,15 +26,21 @@ const GameComponent: React.FC = () => {
       <div style={gameComponentStyles.healthBar}>
         <div style={{ width: `${gameState.health}%`, ...gameComponentStyles.healthBarInner }}>{gameState.health}</div>
       </div>
-      <div style={gameComponentStyles.stats} className = 'game-stats'>
-        <p onClick={() => {call('Урон наносимый персонажем по врагу')}}>Урон: {gameState.damage}</p> 
-        <img style={{width: 170, height: 170}} src = {character}/>
-        <p onClick={() => {call('Процент блокируемого урона')}}>Защита: {gameState.protection}</p> 
-        <p onClick={() => {call('Шанс увернуться от атаки противника')}}>Ловкость: {gameState.agility}%</p>
-        <p>Инвентарь: {gameState.inventory.reduce((acc, item) => acc + item.name + ',', '')}</p>
-        <p onClick={() => {call('Шанс получить предмет после победы над противником')}}>Удача: {gameState.fortune}%</p>
+      <div className = 'game-stats'>
+        <div>
+          <p onClick={() => {call('Урон наносимый персонажем по врагу')}}>Урон: {gameState.damage}</p> 
+          <p onClick={() => {call('Шанс получить предмет после победы над противником')}}>Удача: {gameState.fortune}%</p>
+        </div>
+          <img src = {character}/>
+        
+        <div>
+          <p onClick={() => {call('Процент блокируемого урона')}}>Защита: {gameState.protection}</p> 
+          <p onClick={() => {call('Шанс увернуться от атаки противника')}}>Ловкость: {gameState.agility}%</p>
+        </div>
       </div>
-     
+      <div className='inventory'>
+          <p>Инвентарь: {gameState.inventory.reduce((acc, item) => acc + item.name + ',', '')}</p>
+      </div>
     </div>
       {
         gameState.currentScene.type === 'scene' ?

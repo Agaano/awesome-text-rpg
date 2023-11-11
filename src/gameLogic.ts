@@ -70,6 +70,7 @@ export function useGameLogic(): [GameStateType, () => void, (option: any) => voi
   const damage = inventory.reduce((acc, items) => acc += items?.damage ?? 0, initialDamage)
   const protection = inventory.reduce((acc, item) => acc += item?.shield ?? 0, initialProtection);
   const fortune = inventory.reduce((acc,item) => acc += item?.fortune ?? 0, initialFortune)
+	console.log(previousScene)
 
   const startGame = (): void => {
     setCurrentScene(scenes[0]);

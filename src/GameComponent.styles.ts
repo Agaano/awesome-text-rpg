@@ -50,13 +50,6 @@ export const gameComponentStyles = {
       alignItems: 'center',
       justifyContent: 'center',
       transition: 'width 0.3s',
-    },
-    stats: {
-      display: 'grid', 
-      gridTemplateRows: '1fr 1fr', 
-      gridTemplateColumns: '1fr 1fr 1fr',
-      width: '300px',
-      marginInline: 'auto',
     }
   };
   
