@@ -11,7 +11,7 @@ button {
 .game-stats p {
   user-select: none;
   cursor: pointer;
-  height: 50%;
+  height: 30%;
 }
 
 .game-stats {

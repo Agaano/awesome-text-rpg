@@ -1,5 +1,143 @@
 import { SceneType } from "../types/types";
 
+const newScenes: Array<SceneType> = [
+	{
+		id: 0,
+		text: 'Рады приветсвовать вас на нашей арене!',
+		type: 'scene',
+		options: [
+			{ choice: 'Вступить в первый бой',nextScene: {id: 1, type: 'battle'} },
+			{ choice: 'Я НЕ ХОЧУ!!!', nextScene: {id: -1, type: 'scene'}}
+		],
+	},
+	{
+		id: -1,
+		text: 'Тебя не спрашивают...',
+		type: 'scene',
+		options: [
+			{ choice: 'Вступить в первый бой',nextScene: {id: 1, type: 'battle'} },
+			{ choice: 'НЕЕТ!!!', nextScene: {id: -1, type: 'scene'}}
+		],
+	},
+	{
+		id: 1,
+		text: '2-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [1,1]
+		},
+		nextScene: 2,
+	},
+	{
+		id: 2,
+		text: '3-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [1,1,1]
+		},
+		nextScene: 3,
+	},
+	{
+		id: 3,
+		text: '4-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [2,2,2]
+		},
+		nextScene: 4,
+	},
+	{
+		id: 4,
+		text: '5-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [2,3]
+		},
+		nextScene: 5,
+	},
+	{
+		id: 5,
+		text: '6-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [6]
+		},
+		nextScene: 6,
+	},
+	{
+		id: 6,
+		text: '7-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [15,15,15]
+		},
+		nextScene: 7,
+	},
+	{
+		id: 7,
+		text: '8-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [23,22]
+		},
+		nextScene: 8,
+	},
+	{
+		id: 8,
+		text: '9-й раунд на нашей арене',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [26,26]
+		},
+		nextScene: 1,
+	},
+	{
+		id: 0,
+		text: 'Финальный раунд на нашей арене!',
+		type: 'battle',
+		options: [
+			{ choice: 'Ударить', type: 'attack' },
+		  { choice: 'Похилиться', type: 'healing' },
+		],
+		battle: {
+			enemiesId: [20,31]
+		},
+		nextScene: 1,
+	},
+]
+
 const scenes: Array<SceneType> = [
 	{
 		id: 0,
@@ -40,7 +178,7 @@ const scenes: Array<SceneType> = [
 		],
 		nextScene: 4,
 		battle: {
-		  enemiesId: [1],
+		  enemiesId: [1, 1,],
 		},
 	  },
 	  {
@@ -460,4 +598,4 @@ const scenes: Array<SceneType> = [
 		],
 	  },
 ];
-export default scenes
+export default newScenes

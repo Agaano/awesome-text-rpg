@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useModalAlert, useModalConfirm } from './hooks/useModalAlert'
-import { items } from './prefabs/items'
+import { items, getRandomItemId } from './prefabs/items'
 import scenes from './prefabs/scenes'
 import {
 	BattleOptionType,
@@ -12,12 +12,44 @@ import {
 } from './types/types'
 
 const enemies: EnemyType[] = [
-	{ id: 1, name: 'Скелет', damage: 10, hp: 10, maxHp: 10 },
-	{ id: 2, name: 'Зомби', damage: 5, hp: 20, maxHp: 20 },
-	{ id: 3, name: 'Скелет-лучник', damage: 20, hp: 10, maxHp: 20 },
-	{ id: 4, name: 'Варвар', damage: 20, hp: 20, maxHp: 20 },
-	{ id: 5, name: 'Водный элементаль', damage: 15, hp: 15, maxHp: 15 },
-	{ id: 6, name: 'Злобный маг', damage: 25, hp: 15, maxHp: 15 },
+	{ id: 1, name: 'Скелет', damage: 8, hp: 12, maxHp: 12, range: 'melee' },
+	{ id: 2, name: 'Зомби', damage: 6, hp: 25, maxHp: 25, range: 'melee' },
+	{ id: 3, name: 'Скелет-лучник', damage: 5, hp: 22, maxHp: 22, range: 'ranged' },
+	{ id: 4, name: 'Варвар', damage: 22, hp: 25, maxHp: 25, range: 'melee' },
+	{ id: 5, name: 'Водный элементаль', damage: 18, hp: 20, maxHp: 20, range: 'ranged' },
+	{ id: 6, name: 'Злобный маг', damage: 28, hp: 18, maxHp: 18, range: 'ranged' },
+	{ id: 7, name: 'Огненный дракон', damage: 35, hp: 60, maxHp: 60, range: 'ranged' },
+	{ id: 8, name: 'Ледяной великан', damage: 30, hp: 70, maxHp: 70, range: 'melee' },
+	{ id: 9, name: 'Темный рыцарь', damage: 45, hp: 35, maxHp: 35, range: 'melee' },
+	{ id: 10, name: 'Магия вихря', damage: 40, hp: 45, maxHp: 45, range: 'ranged' },
+	{ id: 11, name: 'Лесной эльф', damage: 25, hp: 30, maxHp: 30, range: 'ranged' },
+	{ id: 12, name: 'Горный тролль', damage: 35, hp: 40, maxHp: 40, range: 'melee' },
+	{ id: 13, name: 'Песчаный голем', damage: 30, hp: 50, maxHp: 50, range: 'melee' },
+	{ id: 14, name: 'Энергетический призрак', damage: 40, hp: 20, maxHp: 20, range: 'ranged' },
+	{ id: 15, name: 'Живая тень', damage: 35, hp: 25, maxHp: 25, range: 'ranged' },
+	{ id: 16, name: 'Стальной грифон', damage: 30, hp: 30, maxHp: 30, range: 'melee' },
+	{ id: 17, name: 'Ветряной элементаль', damage: 25, hp: 20, maxHp: 20, range: 'ranged' },
+	{ id: 18, name: 'Земной голем', damage: 35, hp: 40, maxHp: 40, range: 'melee' },
+	{ id: 19, name: 'Маг огня', damage: 45, hp: 25, maxHp: 25, range: 'ranged' },
+	{ id: 20, name: 'Скользкий медуза', damage: 30, hp: 30, maxHp: 30, range: 'melee' },
+	{ id: 21, name: 'Летучий химера', damage: 40, hp: 35, maxHp: 35, range: 'ranged' },
+	{ id: 22, name: 'Каменный гарпия', damage: 35, hp: 40, maxHp: 40, range: 'melee' },
+	{ id: 23, name: 'Леденящий вампир', damage: 50, hp: 25, maxHp: 25, range: 'ranged' },
+	{ id: 24, name: 'Молниеносный элементаль', damage: 45, hp: 20, maxHp: 20, range: 'ranged' },
+	{ id: 25, name: 'Трещащий голем', damage: 30, hp: 50, maxHp: 50, range: 'melee' },
+	{ id: 26, name: 'Пылающий дьявол', damage: 40, hp: 30, maxHp: 30, range: 'ranged' },
+
+	//Bosses
+	{ id: 27, name: 'Дракон Хаоса', damage: 70, hp: 120, maxHp: 120, range: 'ranged' },
+	{ id: 28, name: 'Лич королевства мертвых', damage: 80, hp: 150, maxHp: 150, range: 'ranged' },
+	{ id: 29, name: 'Архидемон', damage: 90, hp: 180, maxHp: 180, range: 'ranged' },
+	{ id: 30, name: 'Темный колосс', damage: 100, hp: 250, maxHp: 250, range: 'melee' },
+	{ id: 31, name: 'Гидра страха', damage: 110, hp: 220, maxHp: 220, range: 'ranged' },
+	{ id: 32, name: 'Король грифонов', damage: 120, hp: 200, maxHp: 200, range: 'melee' },
+	{ id: 33, name: 'Левиафан мрака', damage: 130, hp: 280, maxHp: 280, range: 'ranged' },
+	{ id: 34, name: 'Судья Ада', damage: 140, hp: 320, maxHp: 320, range: 'ranged' },
+	{ id: 35, name: 'Тень Вселенной', damage: 150, hp: 280, maxHp: 280, range: 'ranged' },
+	{ id: 36, name: 'Зверь Апокалипсиса', damage: 170, hp: 350, maxHp: 350, range: 'melee' }
 ]
 
 export const complexQuests = [
@@ -63,13 +95,14 @@ const initialDamage = 5
 const initialProtection = 0
 const initialHealth = 100
 const initialFortune = 25
+const initialMassDamage = 0
 
 export function useGameLogic(): [
 	GameStateType,
 	() => void,
 	(option: any) => void,
 	(option: any) => void,
-	EnemyType | undefined,
+	EnemyType[] | undefined,
 	any,
 	any
 ] {
@@ -77,7 +110,7 @@ export function useGameLogic(): [
 	const [previousScene, setPreviousScene] = useState<number>(0)
 	const [inventory, setInventory] = useState<ItemType[]>([])
 	const [health, setHealth] = useState<number>(initialHealth)
-	const [battleState, setBattleState] = useState<undefined | EnemyType>()
+	const [battleState, setBattleState] = useState<undefined | EnemyType[]>()
 	const [ConfirmWindow, callConfirm] = useModalConfirm()
 	const [AlertWindow, callAlert] = useModalAlert()
 	const agility = inventory.reduce(
@@ -96,14 +129,17 @@ export function useGameLogic(): [
 		(acc, item) => (acc += item?.fortune ?? 0),
 		initialFortune
 	)
-	console.log(previousScene)
-
+	const massDamage = inventory.reduce(
+		(acc, item) => (acc += item?.massDamage ?? 0),
+		initialMassDamage
+	)
 	const startGame = (): void => {
 		setCurrentScene(scenes[0])
 		setInventory([])
 		setHealth(100)
 		setBattleState(undefined)
 		setPreviousScene(0)
+		pickItems([1,2,3])
 	}
 
 	const gameState: GameStateType = {
@@ -114,6 +150,7 @@ export function useGameLogic(): [
 		protection,
 		agility,
 		fortune,
+		massDamage,
 	}
 
 	const goToScene = (sceneIndex: number) => {
@@ -124,11 +161,11 @@ export function useGameLogic(): [
 
 	const startBattle = (scene: SceneType) => {
 		setPreviousScene(currentScene.id)
-		setBattleState(getEnemyById(scene.battle?.enemiesId[0]))
+		const enemiesArr = scene.battle?.enemiesId.map((enemyId) => {return getEnemyById(enemyId) ?? enemies[0]})
+		setBattleState(enemiesArr)
 	}
 
-	const getEnemyById = (id: number | undefined) => {
-		if (!id) return
+	const getEnemyById = (id: number) => {
 		const enemy = enemies.find(enemy => enemy.id === id) ?? enemies[0]
 		return enemy
 	}
@@ -141,6 +178,11 @@ export function useGameLogic(): [
 		if (!currentScene.nextScene || !battleState) return
 		setBattleState(undefined)
 		goToScene(currentScene.nextScene)
+	}
+
+	const killTheEnemy = (arr: EnemyType[],id: number) => {
+		if (!arr?.[id]) return arr;
+		return removeByIndex(arr, id);
 	}
 
 	const healHp = (hp: number) => {
@@ -158,21 +200,29 @@ export function useGameLogic(): [
 		})
 	}
 
+	const victoryInBattle = () => {
+		if (Math.random() <= Math.abs(fortune) / 100) pickItem(getRandomItemId())
+		leaveTheBattle()
+	}
+
 	const makeBattleChoice = (option: BattleOptionType): void => {
 		if (currentScene.type !== 'battle' || !battleState) return
 		if (option.type === 'attack') {
+			if (!battleState?.[0] || !battleState) return
 			setBattleState(prev => {
-				if (!prev) return
-				const curr = { ...prev, hp: prev.hp - damage }
-				if (prev.hp - damage <= 0) {
-					if (Math.random() > 0.5)
-						pickItem(Math.floor(Math.random() * items.length) + 1)
-					leaveTheBattle()
-					return
+				let curr = prev?.map((enemy, index) => ({...enemy, hp: index === 0 ? enemy.hp - damage : enemy.hp - (damage * (massDamage / 100)) }))
+				const deadEnemiesId = findDeadEnemies(curr ?? []); 
+				if (deadEnemiesId.length > 0) {
+					deadEnemiesId.map((id) => {
+						curr = killTheEnemy(curr ?? [], id)
+						if (curr.length <= 0) victoryInBattle();
+					})
 				}
+				let totalEnemiesDamage = curr?.reduce((acc, enemy, index) => acc += Math.random() > (agility / 100) ? (index === 0 && enemy.range === 'melee' ? enemy.damage : enemy.range === 'ranged' ? enemy.damage : 0) : 0, 0) ?? 0;
+				biteHp(totalEnemiesDamage);
 				return curr
 			})
-			biteHp(Math.random() < agility / 100 ? 0 : battleState.damage)
+			
 		} else if (option.type === 'healing') {
 			const heal = inventory.reduce(
 				(acc, item) => (acc += item?.healing ?? 0),
@@ -187,7 +237,7 @@ export function useGameLogic(): [
 		} else if (option.type === 'leave') {
 			callConfirm('Вы уверены что хотите сбежать?')?.then(value => {
 				if (value) {
-					biteHp(battleState.damage / 2)
+					biteHp(battleState.reduce((acc,enemy) => acc+= enemy.damage, 0) / 2)
 					leaveTheBattle()
 				}
 			})
@@ -208,6 +258,18 @@ export function useGameLogic(): [
 		}
 
 		return newArray
+	}
+
+	function findDeadEnemies(array: Array<EnemyType>) {
+		const results = []
+		let i = 0;
+		for (const object of array) {
+			if (object.hp <= 0) {
+				results.push(i)
+			}
+			i++
+		}
+		return results
 	}
 
 	function findByProperty(array: Array<any>, property: string, value: any) {
@@ -247,6 +309,10 @@ export function useGameLogic(): [
 				(acc, item) => (acc += item?.fortune ?? 0),
 				initialFortune
 			),
+			massDamage: inventory1.reduce(
+				(acc, item) => (acc += item?.massDamage ?? 0),
+				initialMassDamage
+			),
 		}
 		const secondStats = {
 			damage: inventory2.reduce(
@@ -265,8 +331,25 @@ export function useGameLogic(): [
 				(acc, item) => (acc += item?.fortune ?? 0),
 				initialFortune
 			),
+			massDamage: inventory2.reduce(
+				(acc, item) => (acc += item?.massDamage ?? 0),
+				initialMassDamage
+			),
 		}
 		return { firstStats, secondStats }
+	}
+
+	const forcePickItems = async (number: number) => {
+		let pickedItems = 0;
+		while (pickedItems < number) {
+			pickedItems += (await pickItem(getRandomItemId('basic'))) ? 1 : 0
+		}
+	}
+
+	const pickItems = async (itemsId: number[]) => {
+		for (const id of itemsId) {
+			await pickItem(id)
+		}
 	}
 
 	const pickItem = async (itemId: number) => {
@@ -292,86 +375,104 @@ export function useGameLogic(): [
 			}
 		})
 		newInventory.push(item)
-		const statsPreview = getStatsDifferences(inventory, newInventory)
+		const {firstStats, secondStats} = getStatsDifferences(inventory, newInventory)
 		const confirmation = await callConfirm(
 			<div>
 				<p>
-					Вы хотите подобрать <span style={{ color: '#0f0' }}>{item.name}</span>
+					Вы хотите подобрать <span style={{color: item.rare === 'basic' ? '#aaa' : item.rare === 'rare' ? '#0f0' : item.rare === 'epic' ? 'violet' : 'gold'}} >{item.name}</span>
 					?
 				</p>
 				<div>
-					{statsPreview.firstStats.damage !==
-						statsPreview.secondStats.damage && (
+					{firstStats.damage !==
+						secondStats.damage && (
 						<div>
-							Урон: {statsPreview.firstStats.damage} {'->'}{' '}
+							Урон: {firstStats.damage} {'->'}{' '}
 							<span
 								style={{
 									color:
-										statsPreview.firstStats.damage <
-										statsPreview.secondStats.damage
+										firstStats.damage <
+										secondStats.damage
 											? '#0f0'
 											: '#f00',
 								}}
 							>
-								{statsPreview.secondStats.damage}
+								{secondStats.damage}
 							</span>
 						</div>
 					)}
-					{statsPreview.firstStats.shield !==
-						statsPreview.secondStats.shield && (
+					{firstStats.shield !==
+						secondStats.shield && (
 						<div>
-							Защита: {statsPreview.firstStats.shield} {'->'}{' '}
+							Защита: {firstStats.shield} {'->'}{' '}
 							<span
 								style={{
 									color:
-										statsPreview.firstStats.shield <
-										statsPreview.secondStats.shield
+										firstStats.shield <
+										secondStats.shield
 											? '#0f0'
 											: '#f00',
 								}}
 							>
-								{statsPreview.secondStats.shield}
+								{secondStats.shield}
 							</span>
 						</div>
 					)}
-					{statsPreview.firstStats.agility !==
-						statsPreview.secondStats.agility && (
+					{firstStats.agility !==
+						secondStats.agility && (
 						<div>
-							Ловкость: {statsPreview.firstStats.agility} {'->'}{' '}
+							Ловкость: {firstStats.agility}% {'->'}{' '}
 							<span
 								style={{
 									color:
-										statsPreview.firstStats.agility <
-										statsPreview.secondStats.agility
+										firstStats.agility <
+										secondStats.agility
 											? '#0f0'
 											: '#f00',
 								}}
 							>
-								{statsPreview.secondStats.agility}
+								{secondStats.agility}%
 							</span>
 						</div>
 					)}
-					{statsPreview.firstStats.fortune !==
-						statsPreview.secondStats.fortune && (
+					{firstStats.fortune !==
+						secondStats.fortune && (
 						<div>
-							Удача: {statsPreview.firstStats.fortune} {'->'}{' '}
+							Удача: {firstStats.fortune}% {'->'}{' '}
 							<span
 								style={{
 									color:
-										statsPreview.firstStats.fortune <
-										statsPreview.secondStats.fortune
+										firstStats.fortune <
+										secondStats.fortune
 											? '#0f0'
 											: '#f00',
 								}}
 							>
-								{statsPreview.secondStats.fortune}
+								{secondStats.fortune}%
+							</span>
+						</div>
+					)}
+					{firstStats.massDamage !==
+						secondStats.massDamage && (
+						<div>
+							Масс. урон: {firstStats.massDamage}% {'->'}{' '}
+							<span
+								style={{
+									color:
+										firstStats.massDamage <
+										secondStats.massDamage
+											? '#0f0'
+											: '#f00',
+								}}
+							>
+								{secondStats.massDamage}%
 							</span>
 						</div>
 					)}
 				</div>
 			</div>
 		)
-		if (confirmation) setInventory(newInventory)
+		if (confirmation) setInventory(prev => newInventory)
+		return confirmation
 	}
 
 	return [

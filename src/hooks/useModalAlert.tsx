@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 export function useModalConfirm(): [
 	() => React.ReactNode,
 	(elem: React.ReactNode) => Promise<boolean>
@@ -46,13 +46,13 @@ export function useModalConfirm(): [
 
 export function useModalAlert(): [
 	() => React.ReactNode,
-	(text: string) => void
+	(elem: React.ReactNode | string) => void
 ] {
 	const [opened, setOpened] = useState(false)
-	const [text, setText] = useState('')
-	const ToogleModal = (text: string) => {
+	const [element, setElement] = useState<React.ReactNode | string>('')
+	const ToogleModal = (elem: React.ReactNode | string) => {
 		setOpened(true)
-		setText(text)
+		setElement(elem)
 	}
 
 	const elem = () => {
@@ -65,7 +65,7 @@ export function useModalAlert(): [
 		return (
 			<main className='modal' onClick={handleClickOutside}>
 				<div ref={contentRef} className='modal-content'>
-					{text}
+					{element}
 				</div>
 			</main>
 		)

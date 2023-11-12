@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import FightScene from './FightScene'
-import character from './assets/character.png'
 import { useGameLogic } from './gameLogic'
 import { useModalAlert } from './hooks/useModalAlert'
 
@@ -58,7 +57,7 @@ const GameComponent: React.FC = () => {
 							Удача: {gameState.fortune}%
 						</p>
 					</div>
-					<img src={character} />
+					<img src={'src/assets/character.png'} />
 
 					<div>
 						<p
@@ -75,15 +74,40 @@ const GameComponent: React.FC = () => {
 						>
 							Ловкость: {gameState.agility}%
 						</p>
+						<p>
+							Масс.урон: {gameState.damage * (gameState.massDamage / 100)}
+						</p>
 					</div>
 				</div>
 				<div className='inventory'>
 					<p>
 						Инвентарь:{' '}
-						{gameState.inventory.reduce(
-							(acc, item) => acc + item.name + ',',
-							''
-						)}
+						{gameState.inventory.map((item) => {
+							return <span onClick= {() => call(<>
+								<p>Характеристики {item.name}</p>
+								<div>
+									<p>Редкость: {item.rare}</p>
+									{item?.damage && 
+									<p>Урон: {item.damage}</p>
+									}
+									{item?.shield && 
+									<p>Защита: {item.shield}</p>
+									}
+									{item?.agility && 
+									<p>Ловкость: {item.agility}%</p>
+									}
+									{item?.fortune && 
+									<p>Удача: {item.fortune}%</p>
+									}
+									{item?.massDamage && 
+									<p>Масс. урон: {item.massDamage}%</p>
+									}
+								</div>
+							</>)} 
+							style={{color: item.rare === 'basic' ? '#aaa' : item.rare === 'rare' ? '#0f0' : item.rare === 'epic' ? 'violet' : 'gold', cursor: 'pointer'}}>
+								{item.name},
+							</span>
+						})}
 					</p>
 				</div>
 			</div>

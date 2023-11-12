@@ -31,7 +31,8 @@ export interface GameStateType {
   damage: number;
   protection: number;
   agility: number;
-  fortune: number
+  fortune: number;
+  massDamage: number;
 }
 
 
@@ -41,6 +42,7 @@ export type EnemyType = {
   damage: number,
   hp: number,
   maxHp: number,
+  range: 'melee' | 'ranged',
 }
 export type ItemType = {
   id: number,
@@ -51,5 +53,7 @@ export type ItemType = {
   shield?: number,
   agility?: number,
   fortune?: number,
+  massDamage?: number,
+  rare: 'basic' | 'rare' | 'epic' | 'legendary'
   type: 'weapon' | 'potion' | 'special' | 'hat' | 'chest' | 'shield' | 'pants' | 'boots'
 }
