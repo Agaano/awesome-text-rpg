@@ -21,7 +21,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 1,
-		text: '2-й раунд на нашей арене',
+		text: '1-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -34,7 +34,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 2,
-		text: '3-й раунд на нашей арене',
+		text: '2-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -47,7 +47,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 3,
-		text: '4-й раунд на нашей арене',
+		text: '3-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -60,7 +60,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 4,
-		text: '5-й раунд на нашей арене',
+		text: '4-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -73,7 +73,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 5,
-		text: '6-й раунд на нашей арене',
+		text: '5-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -86,7 +86,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 6,
-		text: '7-й раунд на нашей арене',
+		text: '6-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -99,7 +99,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 7,
-		text: '8-й раунд на нашей арене',
+		text: '7-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -112,7 +112,7 @@ const newScenes: Array<SceneType> = [
 	},
 	{
 		id: 8,
-		text: '9-й раунд на нашей арене',
+		text: '8-й раунд на нашей арене',
 		type: 'battle',
 		options: [
 			{ choice: 'Ударить', type: 'attack' },
@@ -121,10 +121,10 @@ const newScenes: Array<SceneType> = [
 		battle: {
 			enemiesId: [26,26]
 		},
-		nextScene: 1,
+		nextScene: 9,
 	},
 	{
-		id: 0,
+		id: 9,
 		text: 'Финальный раунд на нашей арене!',
 		type: 'battle',
 		options: [

@@ -82,11 +82,12 @@ const GameComponent: React.FC = () => {
 				<div className='inventory'>
 					<p>
 						Инвентарь:{' '}
-						{gameState.inventory.map((item) => {
-							return <span onClick= {() => call(<>
+						{gameState.inventory.map((item, index) => {
+							return <span key = {index} onClick= {() => call(<>
 								<p>Характеристики {item.name}</p>
 								<div>
 									<p>Редкость: {item.rare}</p>
+									<p>Тип: {item.type}</p>
 									{item?.damage && 
 									<p>Урон: {item.damage}</p>
 									}

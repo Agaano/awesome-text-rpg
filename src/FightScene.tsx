@@ -15,8 +15,8 @@ const Scene: React.FC<SceneProps> = ({ scene, makeChoice, battleState }: { scene
       <div style={styles.container}>
         <p style={styles.text}>{scene.text}</p>
         {battleState && (
-          battleState.map((enemy) => {
-          return <div style={styles.enemyInfoContainer  as React.CSSProperties}>
+          battleState.map((enemy, index) => {
+          return <div key = {index} style={styles.enemyInfoContainer  as React.CSSProperties}>
             <p>{enemy.name} HP:</p>
             <div style={styles.enemyHealthBar}>
               <div style={{ width: `${(enemy.hp / enemy.maxHp) * 100}%`, ...styles.enemyHealthBarInner }}>{enemy.hp}</div>

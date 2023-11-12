@@ -140,7 +140,7 @@ export function useGameLogic(): [
 		setHealth(100)
 		setBattleState(undefined)
 		setPreviousScene(0)
-		pickItems([1,2,3])
+		pickItems([getRandomItemId()])
 	}
 
 	const gameState: GameStateType = {
@@ -340,12 +340,12 @@ export function useGameLogic(): [
 		return { firstStats, secondStats }
 	}
 
-	const forcePickItems = async (number: number) => {
-		let pickedItems = 0;
-		while (pickedItems < number) {
-			pickedItems += (await pickItem(getRandomItemId('basic'))) ? 1 : 0
-		}
-	}
+	// const forcePickItems = async (number: number) => {
+	// 	let pickedItems = 0;
+	// 	while (pickedItems < number) {
+	// 		pickedItems += (await pickItem(getRandomItemId('basic'))) ? 1 : 0
+	// 	}
+	// }
 
 	const pickItems = async (itemsId: number[]) => {
 		for (const id of itemsId) {
@@ -354,127 +354,128 @@ export function useGameLogic(): [
 	}
 
 	const pickItem = async (itemId: number) => {
-		const item = getItemById(itemId)
-		let newInventory = [...inventory]
-		if (
-			item.type === 'weapon' &&
-			findByProperty(inventory, 'type', 'weapon').length >= 2
-		) {
-			const index = newInventory.findIndex(item => item.type === 'weapon')
-
-			newInventory = removeByIndex(newInventory, index)
-		}
-
-		const availableTypes = ['hat', 'pants', 'chest', 'shield', 'boots']
-		availableTypes.map(typeOfWear => {
+			const item = getItemById(itemId)
+			let newInventory = [...inventory];
 			if (
-				item.type === typeOfWear &&
-				findByProperty(inventory, 'type', typeOfWear).length >= 1
+				item.type === 'weapon' &&
+				findByProperty(inventory, 'type', 'weapon').length >= 2
 			) {
-				const index = newInventory.findIndex(item => item.type === typeOfWear)
+				const index = newInventory.findIndex(item => item.type === 'weapon')
+	
 				newInventory = removeByIndex(newInventory, index)
 			}
-		})
-		newInventory.push(item)
-		const {firstStats, secondStats} = getStatsDifferences(inventory, newInventory)
-		const confirmation = await callConfirm(
-			<div>
-				<p>
-					Вы хотите подобрать <span style={{color: item.rare === 'basic' ? '#aaa' : item.rare === 'rare' ? '#0f0' : item.rare === 'epic' ? 'violet' : 'gold'}} >{item.name}</span>
-					?
-				</p>
+	
+			const availableTypes = ['hat', 'pants', 'chest', 'shield', 'boots']
+			availableTypes.map(typeOfWear => {
+				if (
+					item.type === typeOfWear &&
+					findByProperty(inventory, 'type', typeOfWear).length >= 1
+				) {
+					const index = newInventory.findIndex(item => item.type === typeOfWear)
+					newInventory = removeByIndex(newInventory, index)
+				}
+			})
+			newInventory.push(item)
+			const {firstStats, secondStats} = getStatsDifferences(inventory, newInventory)
+			const finalInventory = [...newInventory];
+			const confirmation = await callConfirm(
 				<div>
-					{firstStats.damage !==
-						secondStats.damage && (
-						<div>
-							Урон: {firstStats.damage} {'->'}{' '}
-							<span
-								style={{
-									color:
-										firstStats.damage <
-										secondStats.damage
-											? '#0f0'
-											: '#f00',
-								}}
-							>
-								{secondStats.damage}
-							</span>
-						</div>
-					)}
-					{firstStats.shield !==
-						secondStats.shield && (
-						<div>
-							Защита: {firstStats.shield} {'->'}{' '}
-							<span
-								style={{
-									color:
-										firstStats.shield <
-										secondStats.shield
-											? '#0f0'
-											: '#f00',
-								}}
-							>
-								{secondStats.shield}
-							</span>
-						</div>
-					)}
-					{firstStats.agility !==
-						secondStats.agility && (
-						<div>
-							Ловкость: {firstStats.agility}% {'->'}{' '}
-							<span
-								style={{
-									color:
-										firstStats.agility <
-										secondStats.agility
-											? '#0f0'
-											: '#f00',
-								}}
-							>
-								{secondStats.agility}%
-							</span>
-						</div>
-					)}
-					{firstStats.fortune !==
-						secondStats.fortune && (
-						<div>
-							Удача: {firstStats.fortune}% {'->'}{' '}
-							<span
-								style={{
-									color:
-										firstStats.fortune <
-										secondStats.fortune
-											? '#0f0'
-											: '#f00',
-								}}
-							>
-								{secondStats.fortune}%
-							</span>
-						</div>
-					)}
-					{firstStats.massDamage !==
-						secondStats.massDamage && (
-						<div>
-							Масс. урон: {firstStats.massDamage}% {'->'}{' '}
-							<span
-								style={{
-									color:
-										firstStats.massDamage <
-										secondStats.massDamage
-											? '#0f0'
-											: '#f00',
-								}}
-							>
-								{secondStats.massDamage}%
-							</span>
-						</div>
-					)}
+					<p>
+						Вы хотите подобрать <span style={{color: item.rare === 'basic' ? '#aaa' : item.rare === 'rare' ? '#0f0' : item.rare === 'epic' ? 'violet' : 'gold'}} >{item.name}</span>
+						?
+					</p>
+					<div>
+						{firstStats.damage !==
+							secondStats.damage && (
+							<div>
+								Урон: {firstStats.damage} {'->'}{' '}
+								<span
+									style={{
+										color:
+											firstStats.damage <
+											secondStats.damage
+												? '#0f0'
+												: '#f00',
+									}}
+								>
+									{secondStats.damage}
+								</span>
+							</div>
+						)}
+						{firstStats.shield !==
+							secondStats.shield && (
+							<div>
+								Защита: {firstStats.shield} {'->'}{' '}
+								<span
+									style={{
+										color:
+											firstStats.shield <
+											secondStats.shield
+												? '#0f0'
+												: '#f00',
+									}}
+								>
+									{secondStats.shield}
+								</span>
+							</div>
+						)}
+						{firstStats.agility !==
+							secondStats.agility && (
+							<div>
+								Ловкость: {firstStats.agility}% {'->'}{' '}
+								<span
+									style={{
+										color:
+											firstStats.agility <
+											secondStats.agility
+												? '#0f0'
+												: '#f00',
+									}}
+								>
+									{secondStats.agility}%
+								</span>
+							</div>
+						)}
+						{firstStats.fortune !==
+							secondStats.fortune && (
+							<div>
+								Удача: {firstStats.fortune}% {'->'}{' '}
+								<span
+									style={{
+										color:
+											firstStats.fortune <
+											secondStats.fortune
+												? '#0f0'
+												: '#f00',
+									}}
+								>
+									{secondStats.fortune}%
+								</span>
+							</div>
+						)}
+						{firstStats.massDamage !==
+							secondStats.massDamage && (
+							<div>
+								Масс. урон: {firstStats.massDamage}% {'->'}{' '}
+								<span
+									style={{
+										color:
+											firstStats.massDamage <
+											secondStats.massDamage
+												? '#0f0'
+												: '#f00',
+									}}
+								>
+									{secondStats.massDamage}%
+								</span>
+							</div>
+						)}
+					</div>
 				</div>
-			</div>
-		)
-		if (confirmation) setInventory(prev => newInventory)
-		return confirmation
-	}
+			)
+			if (confirmation) setInventory(finalInventory)
+			return confirmation
+		}
 
 	return [
 		gameState,
