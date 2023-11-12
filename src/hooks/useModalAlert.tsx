@@ -1,13 +1,16 @@
-import { useState, useRef } from "react"
-export function useModalConfirm(): [() => React.ReactNode, (text: string) => Promise<boolean>] {
+import { useRef, useState } from 'react'
+export function useModalConfirm(): [
+	() => React.ReactNode,
+	(elem: React.ReactNode) => Promise<boolean>
+] {
 	const [opened, setOpened] = useState(false)
-	const [text, setText] = useState('');
+	const [element, setElement] = useState<React.ReactNode | null>(null)
 	const yesButtonRef = useRef<HTMLButtonElement | null>(null)
 	const noButtonRef = useRef<HTMLButtonElement | null>(null)
-	const call = (text: string) => {
-		setText(text);
-		setOpened(true);
-		return new Promise<boolean>((resolve) => {
+	const call = (elem: React.ReactNode) => {
+		setElement(elem)
+		setOpened(true)
+		return new Promise<boolean>(resolve => {
 			setTimeout(() => {
 				yesButtonRef.current?.addEventListener('click', () => {
 					setOpened(false)
@@ -22,28 +25,31 @@ export function useModalConfirm(): [() => React.ReactNode, (text: string) => Pro
 	}
 
 	const elem = () => (
-		<main className = 'modal'>
-			<div className = 'modal-content'>
-				<p className = 'question'>{text}</p>
-				<div className="buttons">
-					<button className = 'yesButton' ref = {yesButtonRef}>Да</button>
-					<button className = 'noButton' ref = {noButtonRef}>Нет</button>
+		<main className='modal'>
+			<div className='modal-content'>
+				<p className='question'>{element}</p>
+				<div className='buttons'>
+					<button className='yesButton' ref={yesButtonRef}>
+						Да
+					</button>
+					<button className='noButton' ref={noButtonRef}>
+						Нет
+					</button>
 				</div>
 			</div>
 		</main>
 	)
 
-
 	if (opened) return [elem, call]
-	return [
-		() => <></>,
-		call
-	]
+	return [() => <></>, call]
 }
 
-export function useModalAlert(): [() => React.ReactNode, (text: string) => void] {
+export function useModalAlert(): [
+	() => React.ReactNode,
+	(text: string) => void
+] {
 	const [opened, setOpened] = useState(false)
-	const [text, setText] = useState('');
+	const [text, setText] = useState('')
 	const ToogleModal = (text: string) => {
 		setOpened(true)
 		setText(text)
@@ -53,16 +59,24 @@ export function useModalAlert(): [() => React.ReactNode, (text: string) => void]
 		const contentRef = useRef<HTMLDivElement | null>(null)
 		const handleClickOutside = (e: any) => {
 			if (!contentRef.current?.contains(e.target)) {
-				setOpened(false);
+				setOpened(false)
 			}
 		}
-		return <main className = 'modal' onClick = {handleClickOutside}><div  ref={contentRef} className = 'modal-content'>{text}</div></main>
+		return (
+			<main className='modal' onClick={handleClickOutside}>
+				<div ref={contentRef} className='modal-content'>
+					{text}
+				</div>
+			</main>
+		)
 	}
 
 	if (opened) return [elem, ToogleModal]
-	
+
 	return [
-		() => {return <></>},
-		ToogleModal
+		() => {
+			return <></>
+		},
+		ToogleModal,
 	]
 }
