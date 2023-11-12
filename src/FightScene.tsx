@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SceneType,EnemyType } from './gameLogic';
+import { SceneType,EnemyType } from './types/types';
 
 import styles from './Scene.styles';
 

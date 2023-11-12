@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SceneType } from './gameLogic';
+import { SceneType } from './types/types';
 import styles from './Scene.styles';
 
 interface SceneProps {
