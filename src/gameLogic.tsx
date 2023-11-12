@@ -117,6 +117,7 @@ export function useGameLogic(): [
 		(acc, item) => (acc += item?.agility ?? 0),
 		initialAgility
 	)
+	console.log(previousScene)
 	const damage = inventory.reduce(
 		(acc, items) => (acc += items?.damage ?? 0),
 		initialDamage
