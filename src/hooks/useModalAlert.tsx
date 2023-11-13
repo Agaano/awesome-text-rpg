@@ -1,48 +1,91 @@
+
 import React, { useRef, useState } from 'react'
+import { ReactDOM } from 'react'
 export function useModalConfirm(): [
 	() => React.ReactNode,
-	(elem: React.ReactNode) => Promise<boolean>
+	(elem: React.ReactNode) => Promise<boolean>,
 ] {
-	const [opened, setOpened] = useState(false)
-	const [element, setElement] = useState<React.ReactNode | null>(null)
-	const yesButtonRef = useRef<HTMLButtonElement | null>(null)
-	const noButtonRef = useRef<HTMLButtonElement | null>(null)
+	const [windows, setWindows] = useState<React.ReactNode[]>([])
 	const call = (elem: React.ReactNode) => {
-		setElement(elem)
-		setOpened(true)
+		let index: number;
+		setWindows(prev => {
+			index = prev.length;
+			const element = outerElement(elem, index);
+			return [...prev, element]
+		})
 		return new Promise<boolean>(resolve => {
-			setTimeout(() => {
-				yesButtonRef.current?.addEventListener('click', () => {
-					setOpened(false)
+			const id = setInterval(() => {
+				const yesButton = document.getElementById(`yesButton${index}`)
+				const noButton = document.getElementById(`noButton${index}`)
+				if (!yesButton || !noButton) return;
+				yesButton.addEventListener('click', () => {
 					resolve(true)
+					setWindows(prev => {
+						return removeByIndex(prev,index)
+					})
+					yesButton.removeEventListener('click',() => {})
+					noButton.removeEventListener('click',() => {})
+					clearInterval(id)
 				})
-				noButtonRef.current?.addEventListener('click', () => {
-					setOpened(false)
+				noButton.addEventListener('click', () => {
 					resolve(false)
+					setWindows(prev => {
+						return removeByIndex(prev, index)
+					})
+					yesButton.removeEventListener('click',() => {})
+					noButton.removeEventListener('click',() => {})
+					clearInterval(id)
 				})
-			}, 500)
+			}, 100)
 		})
 	}
+	
+	const outerElement = (innerElement: React.ReactNode, index: number) => {
+		 return	(<>
+					<main className='modal'>
+						<div className='modal-content'>
+							<p className='question'>{innerElement}</p>
+							<div className='buttons'>
+								<button className='yesButton' id ={`yesButton${index}`}  onClick = {e => {}}>
+									Да
+								</button>
+								<button className='noButton' id = {`noButton${index}`}>
+									Нет
+								</button>
+							</div>
+						</div>
+					</main>
+			</>)
+	}
+	
 
-	const elem = () => (
-		<main className='modal'>
-			<div className='modal-content'>
-				<p className='question'>{element}</p>
-				<div className='buttons'>
-					<button className='yesButton' ref={yesButtonRef}>
-						Да
-					</button>
-					<button className='noButton' ref={noButtonRef}>
-						Нет
-					</button>
-				</div>
-			</div>
-		</main>
-	)
+	
 
-	if (opened) return [elem, call]
-	return [() => <></>, call]
+	const windowsElem = () => (<>{
+		windows.length > 0 &&
+			windows.map((Window) => (
+				<>{Window}</>
+			))
+	}</>)
+	return [windowsElem, call]
 }
+
+function removeByIndex(array: Array<any>, index: number) {
+	if (index < 0 || index >= array.length) {
+		return array
+	}
+
+	const newArray = new Array(array.length - 1)
+	for (let i = 0; i < index; i++) {
+		newArray[i] = array[i]
+	}
+	for (let i = index + 1; i < array.length; i++) {
+		newArray[i - 1] = array[i]
+	}
+
+	return newArray
+}
+
 
 export function useModalAlert(): [
 	() => React.ReactNode,
@@ -50,33 +93,30 @@ export function useModalAlert(): [
 ] {
 	const [opened, setOpened] = useState(false)
 	const [element, setElement] = useState<React.ReactNode | string>('')
-	const ToogleModal = (elem: React.ReactNode | string) => {
-		setOpened(true)
-		setElement(elem)
+	const [windows, setWindows] = useState<React.ReactNode[]>([])
+	const ref = useRef<HTMLDivElement | null>(null)
+
+	const call = (elemToPaste: React.ReactNode | string) => {
+		setWindows(prev => [...prev, elemToPaste])
 	}
 
-	const elem = () => {
-		const contentRef = useRef<HTMLDivElement | null>(null)
-		const handleClickOutside = (e: any) => {
-			if (!contentRef.current?.contains(e.target)) {
-				setOpened(false)
-			}
-		}
+	const windowsElement = () => {
 		return (
-			<main className='modal' onClick={handleClickOutside}>
-				<div ref={contentRef} className='modal-content'>
-					{element}
-				</div>
-			</main>
+			<>{windows.length > 0 &&
+					windows.map((window, index) => {
+						return (
+						<main className='modal' onClick = {(e:any) => {
+							if (!ref.current?.contains(e.target)) {
+							setWindows(prev => removeByIndex(prev,index))
+						}}}>
+							<div ref = {ref} className='modal-content'>
+								{window}
+							</div>
+						</main>
+					)})
+				}</>
 		)
 	}
 
-	if (opened) return [elem, ToogleModal]
-
-	return [
-		() => {
-			return <></>
-		},
-		ToogleModal,
-	]
+	return [windowsElement, call]
 }

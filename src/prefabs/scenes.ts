@@ -41,7 +41,7 @@ const newScenes: Array<SceneType> = [
 		  { choice: 'Похилиться', type: 'healing' },
 		],
 		battle: {
-			enemiesId: [1,1,1]
+			enemiesId: [1,2,1]
 		},
 		nextScene: 3,
 	},
@@ -54,7 +54,7 @@ const newScenes: Array<SceneType> = [
 		  { choice: 'Похилиться', type: 'healing' },
 		],
 		battle: {
-			enemiesId: [2,2,2]
+			enemiesId: [2,2,4]
 		},
 		nextScene: 4,
 	},
@@ -67,7 +67,7 @@ const newScenes: Array<SceneType> = [
 		  { choice: 'Похилиться', type: 'healing' },
 		],
 		battle: {
-			enemiesId: [2,3]
+			enemiesId: [7,3]
 		},
 		nextScene: 5,
 	},

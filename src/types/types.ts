@@ -43,6 +43,7 @@ export type EnemyType = {
   hp: number,
   maxHp: number,
   range: 'melee' | 'ranged',
+  img: string
 }
 export type ItemType = {
   id: number,

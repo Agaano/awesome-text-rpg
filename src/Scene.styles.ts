@@ -4,6 +4,7 @@ export const sceneStyles = {
         border: '1px solid #ddd',
         borderRadius: '5px',
         marginBottom: '20px',
+        maxWidth: '600px'
       },
       text: {
         marginBottom: '10px',
