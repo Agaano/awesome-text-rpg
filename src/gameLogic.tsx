@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { useModalAlert, useModalConfirm } from './hooks/useModalAlert'
 import { items, getRandomItemId } from './prefabs/items'
 import scenes from './prefabs/scenes'
@@ -10,57 +10,7 @@ import {
 	OptionType,
 	SceneType,
 } from './types/types'
-
-const enemies: EnemyType[] = [
-	{ id: 1, name: 'Скелет', damage: 8, hp: 12, maxHp: 12, range: 'melee', img: 'src/assets/skeleton.png' },
-	{ id: 2, name: 'Зомби', damage: 6, hp: 25, maxHp: 25, range: 'melee' , img: 'src/assets/zombie.png' },
-	{ id: 3, name: 'Скелет-лучник', damage: 5, hp: 22, maxHp: 22, range: 'ranged' , img: 'src/assets/skeleton.png' },
-	{ id: 4, name: 'Варвар', damage: 22, hp: 25, maxHp: 25, range: 'melee', img: 'src/assets/barbarian.png' },
-	{ id: 5, name: 'Водный элементаль', damage: 18, hp: 20, maxHp: 20, range: 'ranged', img: 'src/assets/' },
-	{ id: 6, name: 'Злобный маг', damage: 28, hp: 18, maxHp: 18, range: 'ranged', img: 'src/assets/' },
-	{ id: 7, name: 'Огненный дракон', damage: 35, hp: 60, maxHp: 60, range: 'ranged', img: 'src/assets/FlameDrago.png' },
-	{ id: 8, name: 'Ледяной великан', damage: 30, hp: 70, maxHp: 70, range: 'melee', img: 'src/assets/' },
-	{ id: 9, name: 'Темный рыцарь', damage: 45, hp: 35, maxHp: 35, range: 'melee', img: 'src/assets/' },
-	{ id: 10, name: 'Магия вихря', damage: 40, hp: 45, maxHp: 45, range: 'ranged', img: 'src/assets/' },
-	{ id: 11, name: 'Лесной эльф', damage: 25, hp: 30, maxHp: 30, range: 'ranged', img: 'src/assets/' },
-	{ id: 12, name: 'Горный тролль', damage: 35, hp: 40, maxHp: 40, range: 'melee', img: 'src/assets/' },
-	{ id: 13, name: 'Песчаный голем', damage: 30, hp: 50, maxHp: 50, range: 'melee', img: 'src/assets/' },
-	{ id: 14, name: 'Энергетический призрак', damage: 40, hp: 20, maxHp: 20, range: 'ranged', img: 'src/assets/' },
-	{ id: 15, name: 'Живая тень', damage: 35, hp: 25, maxHp: 25, range: 'ranged', img: 'src/assets/' },
-	{ id: 16, name: 'Стальной грифон', damage: 30, hp: 30, maxHp: 30, range: 'melee', img: 'src/assets/' },
-	{ id: 17, name: 'Ветряной элементаль', damage: 25, hp: 20, maxHp: 20, range: 'ranged', img: 'src/assets/' },
-	{ id: 18, name: 'Земной голем', damage: 35, hp: 40, maxHp: 40, range: 'melee', img: 'src/assets/' },
-	{ id: 19, name: 'Маг огня', damage: 45, hp: 25, maxHp: 25, range: 'ranged', img: 'src/assets/' },
-	{ id: 20, name: 'Скользкая медуза', damage: 30, hp: 30, maxHp: 30, range: 'melee', img: 'src/assets/' },
-	{ id: 21, name: 'Летучая химера', damage: 40, hp: 35, maxHp: 35, range: 'ranged', img: 'src/assets/' },
-	{ id: 22, name: 'Каменная гарпия', damage: 35, hp: 40, maxHp: 40, range: 'melee', img: 'src/assets/' },
-	{ id: 23, name: 'Леденящий вампир', damage: 50, hp: 25, maxHp: 25, range: 'ranged', img: 'src/assets/' },
-	{ id: 24, name: 'Молниеносный элементаль', damage: 45, hp: 20, maxHp: 20, range: 'ranged', img: 'src/assets/' },
-	{ id: 25, name: 'Трещащий голем', damage: 30, hp: 50, maxHp: 50, range: 'melee', img: 'src/assets/' },
-	{ id: 26, name: 'Пылающий дьявол', damage: 40, hp: 30, maxHp: 30, range: 'ranged', img: 'src/assets/' },
-
-	//Bosses
-	{ id: 27, name: 'Дракон Хаоса', damage: 70, hp: 120, maxHp: 120, range: 'ranged', img: 'src/assets/' },
-	{ id: 28, name: 'Лич королевства мертвых', damage: 80, hp: 150, maxHp: 150, range: 'ranged', img: 'src/assets/' },
-	{ id: 29, name: 'Архидемон', damage: 90, hp: 180, maxHp: 180, range: 'ranged', img: 'src/assets/' },
-	{ id: 30, name: 'Темный колосс', damage: 100, hp: 250, maxHp: 250, range: 'melee', img: 'src/assets/' },
-	{ id: 31, name: 'Гидра страха', damage: 110, hp: 220, maxHp: 220, range: 'ranged', img: 'src/assets/' },
-	{ id: 32, name: 'Король грифонов', damage: 120, hp: 200, maxHp: 200, range: 'melee', img: 'src/assets/' },
-	{ id: 33, name: 'Левиафан мрака', damage: 130, hp: 280, maxHp: 280, range: 'ranged', img: 'src/assets/' },
-	{ id: 34, name: 'Судья Ада', damage: 140, hp: 320, maxHp: 320, range: 'ranged', img: 'src/assets/' },
-	{ id: 35, name: 'Тень Вселенной', damage: 150, hp: 280, maxHp: 280, range: 'ranged', img: 'src/assets/' },
-	{ id: 36, name: 'Зверь Апокалипсиса', damage: 170, hp: 350, maxHp: 350, range: 'melee', img: 'src/assets/' }
-]
-
-export const complexQuests = [
-	{
-		text: 'Вы встречаете таинственного незнакомца. Как вы поступите?',
-		options: [
-			{ choice: 'Поприветствовать и спросить, кто он', nextScene: 10 },
-			{ choice: 'Осторожно приготовиться к бою', nextScene: 11 },
-		],
-	},
-]
+import enemies from './prefabs/enimes'
 
 type set = {
 	set: number[]
@@ -113,33 +63,42 @@ export function useGameLogic(): [
 	const [battleState, setBattleState] = useState<undefined | EnemyType[]>()
 	const [ConfirmWindow, callConfirm] = useModalConfirm()
 	const [AlertWindow, callAlert] = useModalAlert()
-	const agility = inventory.reduce(
-		(acc, item) => (acc += item?.agility ?? 0),
-		initialAgility
-	)
-	const damage = inventory.reduce(
+	const agility = useMemo(() => {
+		const agility = inventory.reduce(
+			(acc, item) => (acc += item?.agility ?? 0),
+			initialAgility
+		)
+		return agility > 100 ? 100 : agility;
+	}, [inventory])
+	const damage = useMemo(() => inventory.reduce(
 		(acc, items) => (acc += items?.damage ?? 0),
 		initialDamage
-	)
-	const protection = inventory.reduce(
+	), [inventory])
+	const protection = useMemo(() => inventory.reduce(
 		(acc, item) => (acc += item?.shield ?? 0),
 		initialProtection
-	)
-	const fortune = inventory.reduce(
+	),[inventory])
+	const fortune = useMemo(() => inventory.reduce(
 		(acc, item) => (acc += item?.fortune ?? 0),
 		initialFortune
-	)
-	const massDamage = inventory.reduce(
+	),[inventory])
+	const massDamage = useMemo(() => inventory.reduce(
 		(acc, item) => (acc += item?.massDamage ?? 0),
 		initialMassDamage
-	)
+	), [inventory])
+
+	// useEffect(() => {
+	// 	console.log(inventory)
+	// }, [inventory])
+
 	const startGame = () => {
+		console.log('startGame called')
 		setCurrentScene(scenes[0])
 		setInventory([])
 		setHealth(100)
 		setBattleState(undefined)
 		setPreviousScene(0)
-		pickItems([getRandomItemId('epic'),getRandomItemId('epic'),getRandomItemId('epic')])
+		pickItem([getRandomItemId('epic'),getRandomItemId('epic'),getRandomItemId('epic')], [])
 	}
 
 	const gameState: GameStateType = {
@@ -192,6 +151,7 @@ export function useGameLogic(): [
 	const biteHp = (hp: number) => {
 		const protectionCoff = 1 - protection / 100
 		setHealth(prev => {
+			if (prev <= 0) return initialHealth
 			if (prev - hp * protectionCoff <= 0) {
 				callAlert('Вы проиграли!!!! В следующий раз будьте внимательнее!!!')
 				startGame()
@@ -200,27 +160,31 @@ export function useGameLogic(): [
 		})
 	}
 
-	const victoryInBattle = () => {
-		if (Math.random() <= Math.abs(fortune) / 100) pickItem(getRandomItemId())
+	const victoryInBattle = (victoried: boolean) => {
+		if (!victoried) console.log('ПОБЕДАА!!!')
+		if (Math.random() <= Math.abs(fortune) / 100 && !!battleState && !!currentScene.nextScene && !victoried) pickItem([getRandomItemId()])
 		leaveTheBattle()
 	}
 
 	const makeBattleChoice = (option: BattleOptionType): void => {
 		if (currentScene.type !== 'battle' || !battleState) return
 		if (option.type === 'attack') {
-			if (!battleState?.[0] || !battleState) return
+			let victoried = false;
+			if (!battleState?.[0] || !battleState || health <= 0) return;
 			setBattleState(prev => {
-				let curr = prev?.map((enemy, index) => ({...enemy, hp: index === 0 ? enemy.hp - damage : enemy.hp - (damage * (massDamage / 100)) }))
-				const deadEnemiesId = findDeadEnemies(curr ?? []); 
-				if (deadEnemiesId.length > 0) {
-					deadEnemiesId.map((id) => {
-						curr = killTheEnemy(curr ?? [], id)
-						if (curr.length <= 0) victoryInBattle();
-					})
+				let currEnemies = prev?.map((enemy, index) => ({...enemy, hp: index === 0 ? enemy.hp - damage : enemy.hp - (damage * (massDamage / 100)) }))
+				const newEnemies = [];
+				for (let enemy of currEnemies) {
+					if (enemy.hp > 0) newEnemies.push(enemy)
 				}
-				let totalEnemiesDamage = curr?.reduce((acc, enemy, index) => acc += Math.random() > (agility / 100) ? (index === 0 && enemy.range === 'melee' ? enemy.damage : enemy.range === 'ranged' ? enemy.damage : 0) : 0, 0) ?? 0;
+				if (newEnemies.length === 0) {
+					victoryInBattle(victoried)
+					victoried = true;
+					return
+				}
+				let totalEnemiesDamage = newEnemies?.reduce((acc, enemy, index) => acc += Math.random() > (agility / 100) ? (index === 0 && enemy.range === 'melee' ? enemy.damage : enemy.range === 'ranged' ? enemy.damage : 0) : 0, 0) ?? 0;
 				biteHp(totalEnemiesDamage);
-				return curr
+				return newEnemies
 			})
 			
 		} else if (option.type === 'healing') {
@@ -342,12 +306,12 @@ export function useGameLogic(): [
 	const forcePickItems = async (number: number) => {
 		let pickedItems = 0;
 		while (pickedItems < number) {
-			pickedItems += (await pickItem(getRandomItemId('basic'))) ? 1 : 0
+			// pickedItems += (await pickItem(getRandomItemId('basic'))) ? 1 : 0
 		}
 	}
 
 	const pickItems = async (itemsId: number[]) => {
-		const promises = itemsId.map((id) => pickItem(id));
+		// const promises = itemsId.map((id) => pickItem(id));
 	}
 
 	function compareArrays(array1, array2) {
@@ -367,13 +331,23 @@ export function useGameLogic(): [
 		return true;
 	}
 
-	const pickItem = async (itemId: number) => {
+	const pickItem = async (itemId: number[], initialInventory?: ItemType[]) => {
+		console.log(`items: ${itemId}, initialInventory: ${initialInventory?.map((item) => item.name) ?? inventory.map((item) => item.name)}`)
+		let additionalInventory: ItemType[] = initialInventory;
+		for (let i of itemId) {
+			additionalInventory = await confirmPickItem(i, additionalInventory)
+		}
+		setInventory(additionalInventory)
+	}
+
+	const confirmPickItem = async (itemId: number, additionalInventory?: ItemType[]): Promise<ItemType[]> => {
 			const item = getItemById(itemId)
-			let newInventory = [...inventory];
-			setInventory(prev => {
-				newInventory = [...prev]
-				return prev
-			})
+			console.log(`Trying to add ${item.name}`)
+			let newInventory
+			let tempInventory;
+			if (!additionalInventory) tempInventory = [...inventory];
+			else tempInventory = [...additionalInventory]
+			newInventory = [...tempInventory]
 			if (
 				item.type === 'weapon' &&
 				findByProperty(inventory, 'type', 'weapon').length >= 2
@@ -394,9 +368,9 @@ export function useGameLogic(): [
 				}
 			})
 			newInventory.push(item)
-			const {firstStats, secondStats} = getStatsDifferences(inventory, newInventory)
-			const finalInventory = [...newInventory];
-			const confirmation = await callConfirm(
+			const {firstStats, secondStats} = getStatsDifferences(tempInventory, newInventory)
+			const finalInventory:ItemType[] = [...newInventory];
+			return callConfirm(
 				<div>
 					<p>
 						Вы хотите подобрать <span style={{color: item.rare === 'basic' ? '#aaa' : item.rare === 'rare' ? '#0f0' : item.rare === 'epic' ? 'violet' : 'gold'}} >{item.name}</span>
@@ -490,9 +464,14 @@ export function useGameLogic(): [
 						)}
 					</div>
 				</div>
-			)
-			if (confirmation) setInventory(finalInventory)
-			return confirmation
+			).then((confirmation) => {
+				console.log(confirmation ? `${item.name} has been added` : `${item.name} has not been added `)
+				if (!confirmation) return tempInventory
+				return finalInventory
+			}).catch((error) => {
+				console.log(`${item.name} has not been added `)
+				return tempInventory
+			})
 		}
 
 	return [

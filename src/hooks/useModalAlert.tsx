@@ -9,25 +9,24 @@ export function useModalConfirm(): [
 	const call = (elem: React.ReactNode) => {
 		let index: number;
 		setWindows(prev => {
-			index = prev.length;
+			index = prev.length ?? 0;
 			const element = outerElement(elem, index);
 			return [...prev, element]
 		})
 		return new Promise<boolean>(resolve => {
+			let yesButtonListenerSettedUp = false;
 			const id = setInterval(() => {
 				const yesButton = document.getElementById(`yesButton${index}`)
 				const noButton = document.getElementById(`noButton${index}`)
-				if (!yesButton || !noButton) return;
-				yesButton.addEventListener('click', () => {
+				if (!yesButton || !noButton || (yesButtonListenerSettedUp )) return;
+				yesButton.onclick = () => {
 					resolve(true)
 					setWindows(prev => {
 						return removeByIndex(prev,index)
 					})
-					yesButton.removeEventListener('click',() => {})
-					noButton.removeEventListener('click',() => {})
 					clearInterval(id)
-				})
-				noButton.addEventListener('click', () => {
+				}
+				noButton.onclick =  () => {
 					resolve(false)
 					setWindows(prev => {
 						return removeByIndex(prev, index)
@@ -35,7 +34,7 @@ export function useModalConfirm(): [
 					yesButton.removeEventListener('click',() => {})
 					noButton.removeEventListener('click',() => {})
 					clearInterval(id)
-				})
+				}
 			}, 100)
 		})
 	}

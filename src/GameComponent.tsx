@@ -57,7 +57,7 @@ const GameComponent: React.FC = () => {
 							Удача: {gameState.fortune}%
 						</p>
 					</div>
-					<img src={'src/assets/character.png'} />
+					<img src={'./src/assets/character.png'} />
 
 					<div>
 						<p

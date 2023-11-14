@@ -20,7 +20,7 @@ const Scene: React.FC<SceneProps> = ({ scene, makeChoice, battleState }: { scene
               <div style={styles.enemyHealthBar}>
                 <div style={{ width: `${(enemy.hp / enemy.maxHp) * 100}%`, ...styles.enemyHealthBarInner }}>{enemy.hp}</div>
               </div> 
-              <img src= {enemy.img} style = {{width: '180px', height: '180px'}}></img>
+              <img src= {`./${enemy.img}`} style = {{width: '180px', height: '180px'}}></img>
               <p>DAMAGE: {enemy.damage}</p>
             </div>
             })
