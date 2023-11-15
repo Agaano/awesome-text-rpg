@@ -1,5 +1,6 @@
 import { SceneType } from '../types/types'
 import { getRandomEnemyId } from './enimes'
+import { getRandomItemId } from './items'
 
 const newScenes: Array<SceneType> = [
 	{
@@ -158,6 +159,23 @@ const testScenes: SceneType[] = [
 		options: [{ choice: 'Ударить', type: 'attack' }],
 		nextScene: 2,
 	},
+]
+
+const newTestScene: SceneType[] = [
+	{
+		id: 0,
+		text: 'Вы стоите перед тремя сундуками, какой выберете?',
+		type: 'scene',
+		options: [
+			{choice: 'левый', action: {type: 'damage',message: 'Открыв левую дверь вы замечаете что вы наступили в мешок гвоздей и поранились', get: {damage: 5}}},
+			{choice: 'средний', action: {type: 'heal',message: 'Открыв среднюю дверь вы увидели тотем неизвестного божества и решили помолиться', get: {healing: 5}}},
+			{choice: 'Взять обычный предмет', action: {type: 'treasure', message: 'Вы взяли обычный предмет', get: {treasure: [getRandomItemId('basic')]}}},
+			{choice: 'Взять редкий предмет', action: {type: 'treasure', message: 'Вы взяли редкий предмет', get: {treasure: [getRandomItemId('rare')]}}},
+			{choice: 'Взять эпический предмет', action: {type: 'treasure', message: 'Вы взяли эпический предмет', get: {treasure: [getRandomItemId('epic')]}}},
+			{choice: 'Взять легендарный предмет', action: {type: 'treasure', message: 'Вы взяли легендарный предмет', get: {treasure: [getRandomItemId('legendary')]}}},
+			{choice: 'Пройти мимо', nextScene: {id: 1, type: 'scene'}}
+		]
+	}
 ]
 
 const scenes: Array<SceneType> = [
@@ -1357,4 +1375,4 @@ const scenes: Array<SceneType> = [
 		],
 	},
 ]
-export default testScenes
+export default newTestScene

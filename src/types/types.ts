@@ -3,10 +3,15 @@ export type OptionType = {
 	nextScene: { id: number; type: 'battle' | 'npc' | 'scene' }
 }
 
+export type ActionOptionType = {
+	choice: string
+	action: {type: 'heal' | 'treasure' | 'damage' | 'random'; message: string; get: {healing?: number; damage?: number; treasure?: number[]}},
+}
+
 export type SceneType = {
 	id: number
 	text: string
-	options: OptionType[] | BattleOptionType[]
+	options: Array<OptionType | ActionOptionType> | Array<BattleOptionType | ActionOptionType>
 	type: 'battle' | 'npc' | 'scene'
 	battle?: BattleType
 	nextScene?: number
@@ -22,6 +27,19 @@ export type BattleType = {
 	buffs?: string[]
 }
 
+export type SetType = {
+	name: string
+	set: number[]
+	damage?: number
+	healing?: number
+	special?: string
+	protection?: number
+	agility?: number
+	fortune?: number
+	massDamage?: number
+}
+
+
 export interface GameStateType {
 	currentScene: SceneType
 	inventory: any[]
@@ -31,6 +49,7 @@ export interface GameStateType {
 	agility: number
 	fortune: number
 	massDamage: number
+	activeSets: SetType[]
 }
 
 export type EnemyType = {
