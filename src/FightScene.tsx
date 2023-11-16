@@ -5,13 +5,15 @@ import {
   SceneType,
   BattleOptionType,
   OptionType,
+  NpcOptionType,
   ActionOptionType,
 } from "./types/types";
 
 interface SceneProps {
   scene: SceneType;
   makeChoice: (
-    option: BattleOptionType | OptionType | ActionOptionType
+    option: BattleOptionType | OptionType | ActionOptionType | NpcOptionType,
+    index: number
   ) => void;
   battleState: EnemyType[] | undefined;
 }
@@ -23,7 +25,8 @@ const Scene: React.FC<SceneProps> = ({
 }: {
   scene: SceneType;
   makeChoice: (
-    option: BattleOptionType | OptionType | ActionOptionType
+    option: BattleOptionType | OptionType | ActionOptionType | NpcOptionType,
+    index: number
   ) => void;
   battleState: EnemyType[] | undefined;
 }) => {
@@ -62,13 +65,17 @@ const Scene: React.FC<SceneProps> = ({
       <div style={styles.optionsContainer as React.CSSProperties}>
         {scene?.options.map(
           (
-            option: BattleOptionType | OptionType | ActionOptionType,
+            option:
+              | BattleOptionType
+              | OptionType
+              | ActionOptionType
+              | NpcOptionType,
             index: number
           ) => (
             <button
               key={index}
               style={styles.optionButton}
-              onClick={() => makeChoice(option)}
+              onClick={() => makeChoice(option, index)}
             >
               {option.choice}
             </button>

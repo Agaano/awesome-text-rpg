@@ -13,13 +13,16 @@ import {
   OptionType,
   SceneType,
   ActionOptionType,
+  NpcOptionType,
   SetType,
+  NpcType,
 } from "./types/types";
 import enemies from "./prefabs/enimes";
+import npcs from "./prefabs/npc";
 
 const initialAgility = 25;
 const initialDamage = 5;
-const initialProtection = 0;
+const initialProtection = 10;
 const initialHealth = 100;
 const initialFortune = 25;
 const initialMassDamage = 0;
@@ -27,7 +30,7 @@ const initialMassDamage = 0;
 export function useGameLogic(): [
   GameStateType,
   () => void,
-  (option: any) => void,
+  (option: any, index: number) => void,
   (option: any) => void,
   EnemyType[] | undefined,
   any,
@@ -38,6 +41,7 @@ export function useGameLogic(): [
   const [inventory, setInventory] = useState<ItemType[]>([]);
   const [health, setHealth] = useState<number>(initialHealth);
   const [battleState, setBattleState] = useState<undefined | EnemyType[]>();
+  const [npcState, setNpcState] = useState<NpcType | undefined>();
   const [ConfirmWindow, callConfirm] = useModalConfirm();
   const [AlertWindow, callAlert] = useModalAlert();
 
@@ -47,7 +51,8 @@ export function useGameLogic(): [
       const initStat = {
         agility: initialAgility,
         damage: initialDamage,
-        protection: initialProtection,
+        shield: initialProtection,
+        protection: 0,
         fortune: initialFortune,
         massDamage: initialMassDamage,
       };
@@ -70,6 +75,7 @@ export function useGameLogic(): [
         );
       });
       obj["activeSets"] = activeSets;
+      obj["protection"] = obj["shield"] ?? 0 + obj["protection"] ?? 0;
       return obj as {
         agility: number;
         damage: number;
@@ -87,7 +93,6 @@ export function useGameLogic(): [
     setBattleState(undefined);
     setPreviousScene(0);
     pickItem([208, 224, 240, 256, 272, 288, 304, 320], []);
-    // pickItem([getRandomItemId('epic'),getRandomItemId('epic'),getRandomItemId('epic')], [])
   };
 
   const gameState: GameStateType = useMemo(
@@ -101,6 +106,7 @@ export function useGameLogic(): [
       fortune,
       massDamage,
       activeSets,
+      gold: 0,
     }),
     [
       currentScene,
@@ -117,7 +123,13 @@ export function useGameLogic(): [
   const goToScene = (sceneIndex: number) => {
     const scene = scenes.find((scene) => scene.id === sceneIndex) ?? scenes[0];
     if (scene.type === "battle") startBattle(scene);
+    if (scene.type === "npc") startNpc(scene);
     setCurrentScene(scene);
+  };
+
+  const startNpc = (scene: SceneType) => {
+    if (!scene.npc) return;
+    setNpcState(getNpc(scene.npc));
   };
 
   const startBattle = (scene: SceneType) => {
@@ -134,71 +146,37 @@ export function useGameLogic(): [
   };
 
   const makeChoice = (
-    option: OptionType | BattleOptionType | ActionOptionType
+    option: OptionType | BattleOptionType | ActionOptionType | NpcOptionType,
+    index: number
   ): void => {
     const defaultOption = option as OptionType;
     const battleOption = option as BattleOptionType;
     const actionOption = option as ActionOptionType;
-
+    const npcOption = option as NpcOptionType;
     if (!!defaultOption.nextScene) {
       goToScene(defaultOption.nextScene.id);
     } else if (!!battleOption.type) {
       makeBattleChoice(battleOption);
     } else if (!!actionOption.action) {
-      makeActionChoice(actionOption);
+      makeActionChoice(actionOption, index);
+    } else if (!!npcOption.npcAction) {
+      makeNpcChoice(npcOption);
     }
   };
 
-  const makeActionChoice = (option: ActionOptionType) => {
-    const funcs = {
-      heal: ({ healing }: { healing?: number }) => {
-        if (!healing) return;
-        removeOption("heal");
-        healHp(healing);
-      },
-      damage: ({ damage }: { damage?: number }) => {
-        if (!damage) return;
-        removeOption("damage");
-        biteHp(damage);
-      },
-      treasure: async ({ treasure }: { treasure?: number[] }) => {
-        if (!treasure) return;
-        removeOption("treasure");
-        pickItem(treasure, inventory);
-      },
-      random: () => {
-        removeOption("random");
-        const rand = Math.random();
-        if (rand < 0.3) {
-          pickItem(
-            [
-              getRandomItemId("rare"),
-              getRandomItemId("rare"),
-              getRandomItemId(),
-            ],
-            inventory
-          );
-        } else if (rand > 0.3 && rand < 0.6) {
-          biteHp(rand * 10);
-        } else if (rand > 0.6) {
-          healHp(rand * 10);
-        }
-      },
-    };
+  const makeActionChoice = (option: ActionOptionType, index: number) => {
     callAlert(option.action.message);
-    funcs[option.action.type](option.action.get);
+    const { damage, healing, treasure } = option.action.get;
+    if (!!damage) biteHp(damage);
+    if (!!healing) healHp(healing);
+    if (!!treasure && treasure.length > 0) pickItem(treasure, inventory);
+    removeOption(index);
   };
 
-  const removeOption = (type: "treasure" | "heal" | "damage" | "random") => {
+  const removeOption = (index: number) => {
     setCurrentScene((prev) => {
       const options = [...prev.options];
-      const newOptions = removeByIndex(
-        options,
-        options.findIndex((option) => {
-          const actionOption = option as ActionOptionType;
-          return actionOption.action && actionOption.action.type === type;
-        })
-      );
+      const newOptions = removeByIndex(options, index);
       return { ...prev, options: newOptions };
     });
   };
@@ -228,6 +206,37 @@ export function useGameLogic(): [
       }
       return (prev -= hp * protectionCoff);
     });
+  };
+
+  const getNpc = (id: number) => {
+    return npcs.find((npc) => npc.id === id);
+  };
+
+  const makeNpcChoice = (option: NpcOptionType): void => {
+    if (currentScene.type !== "npc" || !npcState) return;
+    const products = npcState.inventory;
+    const funcs = {
+      sell: () => {
+        callAlert(
+          <>
+            <ul>
+              {!!products &&
+                products.length > 0 &&
+                products.map((product) => {
+                  return (
+                    <li>
+                      {getItemById(product.id).name}:{product.cost}
+                    </li>
+                  );
+                })}
+            </ul>
+          </>
+        );
+      },
+      buy: () => {},
+      leave: () => {},
+    };
+    funcs[option.npcAction]();
   };
 
   const victoryInBattle = (victoried: boolean) => {

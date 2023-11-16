@@ -1,14 +1,19 @@
-
-import React from 'react';
-import { SceneType } from './types/types';
-import styles from './Scene.styles';
+import React from "react";
+import { SceneType } from "./types/types";
+import styles from "./Scene.styles";
 
 interface SceneProps {
   scene: SceneType;
-  makeChoice: (option: any) => void;
+  makeChoice: (option: any, index: number) => void;
 }
 
-const Scene: React.FC<SceneProps> = ({ scene, makeChoice } : {scene: SceneType, makeChoice: (option : number) => void}) => {
+const Scene: React.FC<SceneProps> = ({
+  scene,
+  makeChoice,
+}: {
+  scene: SceneType;
+  makeChoice: (option: number, index: number) => void;
+}) => {
   return (
     <div style={styles.container}>
       <p style={styles.text}>{scene.text}</p>
@@ -17,7 +22,7 @@ const Scene: React.FC<SceneProps> = ({ scene, makeChoice } : {scene: SceneType, 
           <button
             key={index}
             style={styles.optionButton}
-            onClick={() => makeChoice(option)}
+            onClick={() => makeChoice(option, index)}
           >
             {option.choice}
           </button>
